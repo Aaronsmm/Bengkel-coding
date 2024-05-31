@@ -1,0 +1,110 @@
+*index.html:*
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah Sakit</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Selamat Datang di Rumah Sakit</h1>
+    <p><a href="form.php">Pendaftaran Pasien</a></p>
+</body>
+</html>
+
+
+*style.css:*
+css
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: center;
+    padding: 50px;
+}
+h1 {
+    color: #2c3e50;
+}
+a {
+    text-decoration: none;
+    color: #3498db;
+    font-weight: bold;
+}
+a:hover {
+    color: #2980b9;
+}
+
+
+*connect.php:*
+php
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hospital";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+?>
+
+
+*form.php:*
+php
+<?php include('connect.php'); ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Pasien</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Pendaftaran Pasien</h1>
+    <form action="form.php" method="post">
+        <label for="name">Nama:</label> <br>
+        <input type="text" id="name" name="name" required> <br>
+        <label for="age">Umur:</label> <br>
+        <input type="number" id="age" name="age" required> <br>
+        <label for="address">Alamat:</label> <br>
+        <input type="text" id="address" name="address" required> <br>
+        <input type="submit" value="Daftar">
+    </form>
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $name = $_POST['name'];
+        $age = $_POST['age'];
+        $address = $_POST['address'];
+
+        $sql = "INSERT INTO patients (name, age, address) VALUES ('$name', '$age', '$address')";
+        
+        if ($conn->query($sql) === TRUE) {
+            echo "Pendaftaran berhasil!";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+        
+        $conn->close();
+    }
+    ?>
+</body>
+</html>
+
+
+*config.sql:*
+sql
+CREATE DATABASE hospital;
+
+USE hospital;
+
+CREATE TABLE patients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    address VARCHAR(255) NOT NULL
+);
